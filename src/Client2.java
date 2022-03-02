@@ -11,12 +11,15 @@ public class Client2 {
         Thread sendmessage =new Thread(new Runnable() {
             @Override
             public void run() {
-                try {
-                    String message=input.readLine();
-                    dos.writeUTF(message);
-                    dos.flush();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                while(true)
+                {
+                    try {
+                        String message = input.readLine();
+                        dos.writeUTF(message);
+                        dos.flush();
+                    } catch (IOException e) {
+                        System.out.println(e.getMessage());
+                    }
                 }
 
             }
@@ -24,11 +27,15 @@ public class Client2 {
         Thread recieveMessage =new Thread(new Runnable() {
             @Override
             public void run() {
-                try {
-                    String reciveMessage=dis.readUTF();
-                    System.out.println(reciveMessage);
-                } catch (IOException e) {
-                    e.printStackTrace();
+                while(true)
+                {
+
+                    try {
+                        String reciveMessage = dis.readUTF();
+                        System.out.println(reciveMessage);
+                    } catch (IOException e) {
+                        System.out.println(e.getMessage());
+                    }
                 }
 
             }
