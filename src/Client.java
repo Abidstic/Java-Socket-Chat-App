@@ -7,17 +7,23 @@ public class Client {
         DataInputStream dis=new DataInputStream(clientSocket.getInputStream());
         DataOutputStream dos=new DataOutputStream(clientSocket.getOutputStream());
         BufferedReader input=new BufferedReader(new InputStreamReader(System.in));
+        String name=input.readLine();
+        dos.writeUTF(name);
 
             Thread sendmessage = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    try {
-                        String message = input.readLine();
-                        dos.writeUTF(message);
-                        dos.flush();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    while(true)
+                    {
+                        try {
+                            String message = input.readLine();
+                            dos.writeUTF(message);
+                            dos.flush();
+                        } catch (IOException e) {
+                            System.out.println(e.getMessage());
+                        }
                     }
+
 
                 }
             });
@@ -25,11 +31,15 @@ public class Client {
             Thread recieveMessage = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    try {
-                        String reciveMessage = dis.readUTF();
-                        System.out.println(reciveMessage);
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    while(true)
+                    {
+
+                        try {
+                            String reciveMessage = dis.readUTF();
+                            System.out.println(reciveMessage);
+                        } catch (IOException e) {
+                            System.out.println(e.getMessage());
+                        }
                     }
 
                 }

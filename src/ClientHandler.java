@@ -3,7 +3,7 @@ import java.net.Socket;
 import java.util.StringTokenizer;
 
 public class ClientHandler implements Runnable{
-    private String name;
+    public String name;
     boolean islogged=true;
     Socket soc;
     final DataOutputStream dos;
@@ -26,42 +26,28 @@ public class ClientHandler implements Runnable{
             String message;
             try {
 
-                BufferedReader input=new BufferedReader(new InputStreamReader(System.in));
+                //BufferedReader input=new BufferedReader(new InputStreamReader(System.in));
                 message= dis.readUTF();
                 System.out.println(message);
                 if(message.equals("STOP"))
                 {
                     islogged=false;
-                    soc.close();
+                    //soc.close();
                     break;
                 }
-                String messageCode= input.readLine();
-
-                StringTokenizer str=new StringTokenizer(messageCode,"/");
-                String messageToShow=str.nextToken();
-                String recipient=str.nextToken();
-                for(ClientHandler client : Server.clientList)
-                {
-                    if(client.name.equals(recipient)&& client.islogged==true)
-                    {
-                        client.dos.writeUTF("Server :" +messageToShow);
-                        client.dos.flush();
-                        break;
-
-                    }
-                }
+                /**/
             }
             catch (IOException e) {
-                e.printStackTrace();
+                System.out.println(e.getMessage());
             }
 
         }
-        try {
+       /* try {
             dis.close();
             dos.close();
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
 
 
 

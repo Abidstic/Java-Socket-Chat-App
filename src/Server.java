@@ -1,28 +1,63 @@
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.Buffer;
 import java.util.ArrayList;
+import java.util.StringTokenizer;
+
 
 public class Server {
 
 public static ArrayList<ClientHandler> clientList=new ArrayList<ClientHandler>();
-static int clientNo=1;
+
+public static BufferedReader input=new BufferedReader(new InputStreamReader(System.in));
+
+
 
     public static void main(String[] args) throws IOException {
         ServerSocket serverSocket=new ServerSocket(5000);
         System.out.println("Waiting for the client");
 
-        while (true)
+        new Thread(()-> {
+            while (true) {
+                try{
+                    Socket soc = serverSocket.accept();
+
+                    DataInputStream dis = new DataInputStream(soc.getInputStream());
+                    DataOutputStream dos = new DataOutputStream(soc.getOutputStream());
+                    String name=dis.readUTF();
+                    System.out.println("Client " + name + " is connected");
+                    ClientHandler clientHandler = new ClientHandler(soc, name, dis, dos);
+                    Thread thread = new Thread(clientHandler);
+                    clientList.add(clientHandler);
+                    thread.start();
+
+
+                } catch (IOException e) {
+                    System.out.println(e.getMessage());
+                }
+
+            }
+        }).start();
+        while(true)
         {
-            Socket soc=serverSocket.accept();
-            System.out.println("Client "+clientNo+" is connected");
-            DataInputStream dis = new DataInputStream(soc.getInputStream());
-            DataOutputStream dos = new DataOutputStream(soc.getOutputStream());
-            ClientHandler clientHandler=new ClientHandler(soc,"client"+clientNo,dis,dos);
-            Thread thread=new Thread(clientHandler);
-            clientList.add(clientHandler);
-            thread.start();
-            clientNo++;
+
+            String messageCode= input.readLine();
+
+            StringTokenizer str=new StringTokenizer(messageCode,"/");
+            String messageToShow=str.nextToken();
+            String recipient=str.nextToken();
+            for(ClientHandler client : Server.clientList)
+            {
+                if(client.name.equals(recipient)&& client.islogged==true)
+                {
+                    client.dos.writeUTF("Server :" +messageToShow);
+                    client.dos.flush();
+                    break;
+
+                }
+            }
+
         }
 
     }
